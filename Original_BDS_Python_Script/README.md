@@ -1,5 +1,5 @@
 # Data Processing for Strike Experiments on BDS Sensors
-# ALEKANDR - Please update your import script using this as a template
+# ALEKSANDER - Please update your import script using this as a template
 
 ## Purpose
 
