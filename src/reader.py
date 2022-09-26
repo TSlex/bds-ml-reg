@@ -7,16 +7,13 @@ import pandas as pd
 class Reader(ABC):
 
     @classmethod
+    @abstractmethod
     def read_from_file(cls, filepath: str, sensor_type="bds100"):
         filepath = Path(filepath).as_posix()
         if sensor_type == "bds100":
-            return ReadBDS100().read_from(filepath)
+            return ReadBDS100().read_from_file(filepath)
         else:
             raise NotImplementedError
-
-    @abstractmethod
-    def read_from(self, filepath: str):
-        raise NotImplementedError
 
     @classmethod
     def _read_from_buffer(cls, filepath, buffer_format):
@@ -37,7 +34,7 @@ class ReadBDS100(Reader):
     def __init__(self) -> None:
         super().__init__()
 
-    def read_from(self, filepath: str):
+    def read_from_file(self, filepath: str, **kwargs):
         buffer_format = "HI22f4B"
         data_raw = super()._read_from_buffer(filepath, buffer_format)
 
