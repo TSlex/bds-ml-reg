@@ -19,5 +19,3 @@ dataset = dataset[[
 
 # save to csv
 dataset.to_csv("data/csv/B150101134132.csv", index=False)
-
-dataset[["Accel.X"]].plot()
