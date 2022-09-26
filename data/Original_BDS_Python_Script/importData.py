@@ -1,7 +1,7 @@
 import struct
 from abc import ABC, abstractmethod
 from pathlib import Path
-from jupyter_client import BlockingKernelClient
+# from jupyter_client import BlockingKernelClient
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,7 +12,7 @@ plt.style.use("seaborn-whitegrid")
 
 class Rapid(ABC):
     def __init__(
-        self, filename: str
+            self, filename: str
     ) -> None:  # Attributes same for all Sensors can be placed here
         """This is an abstract class (ABC).
         It provides methods which are the same between the sensor / subclasses.
