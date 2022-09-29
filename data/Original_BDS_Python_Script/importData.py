@@ -76,7 +76,7 @@ class Rapid(ABC):
         accmag = self.data["accmag"].rolling(10).mean()[::10]
 
         color = "C0"
-        fig, ax1 = plt.subplots(figsize=(25, 5))
+        x
         ax1.set_xlabel("time [s]")
         ax1.set_ylabel("Pressure [hPa]", color=color)
         ax1.plot(t, pres, color=color)
