@@ -5,26 +5,42 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <script src="https://cdn.plot.ly/plotly-2.14.0.min.js"></script>
-        <!-- <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script> -->
+        <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
         <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/1.0.21/jquery.csv.min.js"></script> -->
         <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
 
-        <!-- <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-        />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script> -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
         <script src="main.js" defer></script>
         <title>BDS Visualisation</title>
     </head>
-    <body>
-        <input type="file" id="file-selector" accept=".csv" />
-        <div class="plot">
-            <div id="pressure"></div>
-            <div id="acceleration"></div>
-            <div id="magnitude"></div>
-            <div id="gyro"></div>
+    <body style="background-color: rgb(44, 42, 42)">
+        <div class="container p-3">
+            <div class="row">
+                <div class="col" style="background-color: red">
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" id="file-selector" accept=".csv" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div id="canvas"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="background-color: red">
+                    <input type="range" id="customRange3" min="0" max="294182" step="1" oninput="testLine(this.value)" />
+                </div>
+            </div>
+            <div class="row d-flex">
+                <div class="col-6 d-flex gap-2 justify-content-center">
+                    <div class="flex-fill btn btn-primary">ADD</div>
+                    <div class="flex-fill btn btn-primary">EXPORT</div>
+                    <div class="flex-fill btn btn-primary">IMPORT</div>
+                </div>
+            </div>
         </div>
     </body>
     <script>

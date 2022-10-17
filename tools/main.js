@@ -12,9 +12,14 @@ const GYRO_X = "Gyro.X";
 const GYRO_Y = "Gyro.Y";
 const GYRO_Z = "Gyro.Z";
 
+// general
+filename = "";
+file_loaded = false;
+
 // data loading
-function loadFile(filepath) {
-    dfd.readCSV(filepath).then((df) => {
+function loadFile(fileobj) {
+    filename = fileobj.name.split(".")[0];
+    dfd.readCSV(fileobj).then((df) => {
         handleCSV(df);
     });
 }
@@ -23,9 +28,7 @@ function handleCSV(df_) {
     df = df_;
 
     bds_times = df["Timestamp"].sub(df["Timestamp"].min()).$data;
-    bds_press = df
-        .loc({ columns: [PRESS_LEFT, PRESS_CENTER, PRESS_RIGHT] })
-        .mean().$data;
+    bds_press = df.loc({ columns: [PRESS_LEFT, PRESS_CENTER, PRESS_RIGHT] }).mean().$data;
 
     bds_accelX = df[ACCEL_X].$data;
     bds_accelY = df[ACCEL_Y].$data;
@@ -39,31 +42,58 @@ function handleCSV(df_) {
     bds_gyroY = df[GYRO_Y].$data;
     bds_gyroZ = df[GYRO_Z].$data;
 
-    // df_time = df["Timestamp"]
-    // df_time = df_time.sub(df_time.min())
+    drawPlot();
+    file_loaded = true;
+}
 
-    // df = df.drop("Timestamp")
-    // df = df.addColumn("Timestamp", df_time)
+var getPlotData = () => [{ x: bds_times, y: bds_press, mode: "lines" }];
 
-    // console.log(df);
+var getPlotLayout = () => ({
+    title: filename,
+    uirevision: "true",
+    shapes: [
+        {
+            type: "line",
+            yref: "paper",
+            x0: line_pos, // * Math.max(...bds_times),
+            y0: 0,
+            x1: line_pos, // * Math.max(...bds_times),
+            y1: 1,
+            line: {
+                color: "red",
+                width: 2.5,
+            },
+        },
+    ],
+});
 
-    // df["Timestamp"].sub(df["Timestamp"].min(), { inplace: true });
+function drawPlot() {
+    if (file_loaded) {
+        Plotly.react("canvas", getPlotData(), getPlotLayout());
+        // let layout = getPlotLayout()
 
-    // df = new dfd.DataFrame(csv);
-    // console.log(df.columns);
-    // df["Timestamp"].min().print()
-    // df["Timestamp"] = df["Timestamp"] - df["Timestamp"].min()
-    // console.log(df["Timestamp"]);
+        // Plotly.react("canvas", getPlotData(), getPlotLayout());
+    } else {
+        Plotly.newPlot("canvas", getPlotData(), getPlotLayout()).then(() => {
+            var canvas = document.getElementById("canvas");
+            canvas.on("plotly_relayout", function (eventdata) {
+                console.log(eventdata);
+                var xAxis = eventdata.xaxis;
+                var yAxis = eventdata.yaxis;
+                console.log("X-axis range: " + xAxis);
+                console.log("Y-axis range: " + yAxis);
+            });
+        });
+    }
+}
 
-    // press = df.loc({ columns: ["Press.Left", "Press.Center", "Press.Right"] })
-    // press.plot("pressure").line();
+line_pos = 0;
 
-    // accel = df.loc({ columns: ["Accel.X", "Accel.Y", "Accel.Z"] })
-    // accel.plot("acceleration").line();
-
-    // magnet = df.loc({ columns: ["Magnet.X", "Magnet.Y", "Magnet.Z"] })
-    // magnet.plot("magnitude").line();
-
-    // gyro = df.loc({ columns: ["Gyro.X", "Gyro.Y", "Gyro.Z"] })
-    // gyro.plot("gyro").line();
+function testLine(value) {
+    // line_pos = value / 1000;
+    line_pos = value;
+    if (file_loaded) {
+        drawPlot();
+    }
+    // console.log(line_pos);
 }
