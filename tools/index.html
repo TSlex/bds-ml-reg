@@ -15,10 +15,10 @@
         <script src="main.js" defer></script>
         <title>BDS Visualisation</title>
     </head>
-    <body style="background-color: rgb(44, 42, 42)">
+    <body>
         <div class="container p-3">
             <div class="row">
-                <div class="col" style="background-color: red">
+                <div class="col">
                     <div class="input-group mb-3">
                         <input type="file" class="form-control" id="file-selector" accept=".csv" />
                     </div>
@@ -30,15 +30,44 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col" style="background-color: red">
-                    <input type="range" id="customRange3" min="0" max="294182" step="1" oninput="testLine(this.value)" />
+                <div class="col">
+                    <div class="row g-3">
+                        <div class="col-3"><input type="text" class="form-control" value="Nadir pressure" /></div>
+                        <div class="col"><input type="range" class="form-range" min="0" max="294182" step="1" oninput="testLine(this.value)" /></div>
+                        <div class="col-1">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                                <label class="form-check-label" for="flexCheckDefault">hidden?</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="d-flex align-items-center">
+                            <span class="form-label m-2">Style:</span>
+                            <select class="form-select">
+                                <option value="line">line</option>
+                                <option value="dashed">dashed</option>
+                                <option value="dashed2">dashed2</option>
+                            </select>
+                        </div>
+                        </div>
+                        <div class="col"><div class="d-flex align-items-center">
+                            <span class="form-label m-2">Color:</span>
+                            <input type="color" class="form-control form-control-color" id="exampleColorInput" value="#FF0000" title="Choose your color" />
+                        </div></div>
+                        <div class="col">
+                            <div class="btn btn-primary disabled">REMOVE</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="row d-flex">
                 <div class="col-6 d-flex gap-2 justify-content-center">
-                    <div class="flex-fill btn btn-primary">ADD</div>
-                    <div class="flex-fill btn btn-primary">EXPORT</div>
-                    <div class="flex-fill btn btn-primary">IMPORT</div>
+                    <div class="flex-fill btn btn-primary disabled">ADD</div>
+                    <div class="flex-fill btn btn-primary">MANUAL UPDATE</div>
+                    <div class="flex-fill btn btn-primary disabled">IMPORT</div>
+                    <div class="flex-fill btn btn-primary">SAVE</div>
                 </div>
             </div>
         </div>
