@@ -16,6 +16,12 @@ const GYRO_Z = "Gyro.Z";
 filename = "";
 file_loaded = false;
 
+controls = [
+    { name: "Entrance point", style: "solid", color: "#FF0000", hidden: false, opacity: 0.9, position: 0 },
+    // { name: "Nadir pressure" },
+    // { name: "Tailwater" }
+];
+
 // data loading
 function loadFile(fileobj) {
     filename = fileobj.name.split(".")[0];
@@ -44,6 +50,88 @@ function handleCSV(df_) {
 
     drawPlot();
     file_loaded = true;
+    loadUI();
+}
+
+function loadUI() {
+    // make em vissible
+    controlsList = document.getElementById("controls-list");
+    controlsList.style.display = "";
+    cListChildren = controlsList.children;
+
+    // attach event handlers to forms
+    controls.forEach((child, index) => {
+        // name
+        name_elem = cListChildren[index].getElementsByClassName("c-name")[0];
+        child.name_elem = name_elem;
+        name_elem.oninput = (event) => {
+            child.name = event.target.value;
+            drawPlot();
+            // console.log(child.name);
+        };
+
+        // hide button
+        hide_elem = cListChildren[index].getElementsByClassName("c-hide")[0];
+        child.hide_elem = hide_elem;
+        hide_elem.onclick = (event) => {
+            child.hidden = !child.hidden;
+            if (child.hidden) {
+                hide_elem.innerText = "SHOW";
+            } else {
+                hide_elem.innerText = "HIDE";
+            }
+            drawPlot();
+            // console.log(child.hidden);
+        };
+
+        // color picker
+        color_elem = cListChildren[index].getElementsByClassName("c-color")[0];
+        child.color_elem = color_elem;
+        color_elem.oninput = (event) => {
+            child.color = event.target.value;
+            drawPlot();
+            // console.log(child.color);
+        };
+
+        // line style
+        style_elem = cListChildren[index].getElementsByClassName("c-style")[0];
+        child.style_elem = style_elem;
+        style_elem.oninput = (event) => {
+            child.style = event.target.value;
+            drawPlot();
+            // console.log(child.style);
+        };
+
+        // opacity
+        opacity_elem = cListChildren[index].getElementsByClassName("c-opacity")[0];
+        child.opacity_elem = opacity_elem;
+        opacity_elem.oninput = (event) => {
+            child.opacity = event.target.value;
+            drawPlot();
+            // console.log(child.opacity);
+        };
+
+        // position
+        pos_elem = cListChildren[index].getElementsByClassName("c-pos")[0];
+        child.pos_elem = pos_elem;
+        pos_elem.oninput = (event) => {
+            child.position = event.target.value;
+            drawPlot();
+            // console.log(child.position);
+        };
+
+        // backward update
+        child.update = () => {
+            child.name_elem.value = child.name;
+            child.style_elem.value = child.style;
+            child.color_elem.value = child.color;
+            child.hide_elem.value = child.hidden;
+            child.opacity_elem.value = child.opacity;
+            child.pos_elem.value = child.position;
+        };
+
+        child.update();
+    });
 }
 
 var getPlotData = () => [{ x: bds_times, y: bds_press, mode: "lines" }];
@@ -59,9 +147,11 @@ var getPlotLayout = () => ({
             y0: 0,
             x1: line_pos, // * Math.max(...bds_times),
             y1: 1,
+            opacity: controls[0].opacity,
             line: {
-                color: "red",
+                color: controls[0].color,
                 width: 2.5,
+                dash: controls[0].style
             },
         },
     ],
