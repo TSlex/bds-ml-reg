@@ -19,10 +19,17 @@ let bds_times_max = 0;
 let sliderBaseChange = 5000;
 let plotZoom = 1;
 
+displayTraceConf = {
+    press: true,
+    accel: false,
+    magnet: false,
+    gyro: false,
+};
+
 controls = [
     { name: "Entrance point", style: "solid", color: "#FF0000", hidden: false, opacity: 0.9, position: 0 },
-    // { name: "Nadir pressure" },
-    // { name: "Tailwater" }
+    { name: "Nadir pressure", style: "solid", color: "#00FF00", hidden: false, opacity: 0.9, position: 0 },
+    { name: "Tailwater", style: "solid", color: "#0000FF", hidden: false, opacity: 0.9, position: 0 },
 ];
 
 // data loading
@@ -134,7 +141,11 @@ function loadUI() {
         // position adjust slider
         pos_slider_elem = cListChildren[index].getElementsByClassName("c-pos-slider")[0];
         child.pos_slider_elem = pos_slider_elem;
-        pos_slider_elem.onchange = (event) => {
+        // pos_slider_elem.onblur = (event) => {
+        //     pos_slider_elem.value = 0;
+        //     stopSliderChange(child);
+        // };
+        pos_slider_elem.onclick = (event) => {
             pos_slider_elem.value = 0;
             stopSliderChange(child);
         };
@@ -157,6 +168,29 @@ function loadUI() {
 
         child.update();
     });
+
+    // attach buttons to change trance vissibility
+    btnList = document.getElementById("c-trance");
+    btnListChildren = btnList.children;
+    btnIds = ["press", "accel", "magnet", "gyro"];
+    Array.from(btnListChildren).forEach((child, index) => {
+        child.onclick = () => {
+            btnId = btnIds[index];
+            displayTraceConf[btnId] = !displayTraceConf[btnId];
+            if (displayTraceConf[btnId]) {
+                if (child.classList.contains("btn-outline-primary")) {
+                    child.classList.remove("btn-outline-primary");
+                }
+                child.classList.add("btn-primary");
+            } else {
+                if (child.classList.contains("btn-primary")) {
+                    child.classList.remove("btn-primary");
+                }
+                child.classList.add("btn-outline-primary");
+            }
+            drawPlot();
+        };
+    });
 }
 
 function doSliderChange(obj, sliderValue) {
@@ -164,7 +198,7 @@ function doSliderChange(obj, sliderValue) {
         clearInterval(obj.intervalJob);
     }
     jobfunc = () => {
-        let new_position = Math.round(obj.position + (sliderValue / 100) * sliderBaseChange * plotZoom ** 2);
+        let new_position = Math.round(obj.position + (sliderValue / 100) * sliderBaseChange * plotZoom);
 
         if (new_position >= 0 && new_position <= bds_times_max) {
             obj.position = new_position;
@@ -186,27 +220,78 @@ function stopSliderChange(obj) {
     }
 }
 
-var getPlotData = () => [{ x: bds_times, y: bds_press, mode: "lines" }];
+function toogleTrance(trace) {
+    switch (trace) {
+        case "accel":
+            displayTraceConf["accel"] = !displayTraceConf["accel"];
+            break;
+        case "magnet":
+            displayTraceConf["magnet"] = !displayTraceConf["magnet"];
+            break;
+        case "gyro":
+            displayTraceConf["gyro"] = !displayTraceConf["gyro"];
+            break;
+        default:
+            displayTraceConf["press"] = !displayTraceConf["press"];
+            break;
+    }
+}
+
+function getTranceVisibility(traceName) {
+    return displayTraceConf[traceName] ? "true" : "legendonly";
+}
+
+var getPlotData = () => [
+    { name: "Pressure", visible: getTranceVisibility("press"), x: bds_times, y: bds_press, mode: "lines" },
+    { name: "Acceleration X", visible: getTranceVisibility("accel"), x: bds_times, y: bds_accelX, mode: "lines" },
+    { name: "Acceleration Y", visible: getTranceVisibility("accel"), x: bds_times, y: bds_accelY, mode: "lines" },
+    { name: "Acceleration Z", visible: getTranceVisibility("accel"), x: bds_times, y: bds_accelZ, mode: "lines" },
+    { name: "Magnitude X", visible: getTranceVisibility("magnet"), x: bds_times, y: bds_magnetX, mode: "lines" },
+    { name: "Magnitude Y", visible: getTranceVisibility("magnet"), x: bds_times, y: bds_magnetY, mode: "lines" },
+    { name: "Magnitude Z", visible: getTranceVisibility("magnet"), x: bds_times, y: bds_magnetZ, mode: "lines" },
+    { name: "Gyroscope X", visible: getTranceVisibility("gyro"), x: bds_times, y: bds_gyroX, mode: "lines" },
+    { name: "Gyroscope Y", visible: getTranceVisibility("gyro"), x: bds_times, y: bds_gyroY, mode: "lines" },
+    { name: "Gyroscope Z", visible: getTranceVisibility("gyro"), x: bds_times, y: bds_gyroZ, mode: "lines" },
+];
+
+var getPointNames = () => ({
+    x: controls.map((ctrl) => {
+        return ctrl.position;
+    }),
+    y: controls.map((ctrl) => {
+        return 1;
+    }),
+    textposition: "bottom",
+    text: controls.map((ctrl) => {
+        return ctrl.name;
+    }),
+    mode: "text",
+});
 
 var getPlotLayout = () => ({
-    title: filename,
+    title: {
+        text: filename,
+        font: {
+            size: 24,
+        },
+    },
     uirevision: "true",
-    shapes: [
-        {
+    shapes: controls.map((ctrl) => {
+        return {
             type: "line",
             yref: "paper",
-            x0: controls[0].position, // * Math.max(...bds_times),
+            x0: ctrl.position,
             y0: 0,
-            x1: controls[0].position, // * Math.max(...bds_times),
+            x1: ctrl.position,
             y1: 1,
-            opacity: controls[0].hidden ? 0 : controls[0].opacity,
+            opacity: ctrl.hidden ? 0 : ctrl.opacity,
             line: {
-                color: controls[0].color,
+                color: ctrl.color,
                 width: 2.5,
-                dash: controls[0].style,
+                dash: ctrl.style,
             },
-        },
-    ],
+        };
+    }),
 });
 
 function drawPlot() {
@@ -230,13 +315,61 @@ function drawPlot() {
     }
 }
 
-line_pos = 0;
+function exportJSON() {
+    const jsonStr = JSON.stringify(
+        controls.map((elem) => {
+            return { name: elem.name, time: elem.position };
+        })
+    );
 
-function testLine(value) {
-    // line_pos = value / 1000;
-    line_pos = value;
-    if (fileLoaded) {
-        drawPlot();
-    }
-    // console.log(line_pos);
+    const options = {
+        suggestedName: filename,
+        types: [
+            {
+                accept: {
+                    "application/json": [".json"],
+                },
+            },
+        ],
+    };
+
+    window.showSaveFilePicker(options).then((handle) => {
+        handle.createWritable().then((writtable) => {
+            writtable.write(jsonStr)
+            writtable.close()
+        });
+    });
+}
+
+function importJSON() {
+    // <input type="file" class="form-control" id="file-selector" accept=".csv" />
+    let element = document.createElement("input");
+
+    element.setAttribute("type", "file");
+    element.setAttribute("accept", ".json");
+    element.style.display = "none";
+
+    element.addEventListener("change", (event) => {
+        const fileList = event.target.files;
+        if (fileList.length > 0) {
+            // console.log(fileList[0]);
+            const reader = new FileReader();
+            reader.onload = function () {
+                // console.log(reader.result);
+                // console.log(JSON.parse(reader.result));
+                list = JSON.parse(reader.result);
+                list.forEach((elem, idx) => {
+                    controls[idx].name = elem.name;
+                    controls[idx].position = elem.time;
+                    controls[idx].update();
+                });
+                drawPlot()
+            };
+            reader.readAsText(fileList[0]);
+        }
+    });
+    document.body.appendChild(element);
+
+    element.click();
+    document.body.removeChild(element);
 }
