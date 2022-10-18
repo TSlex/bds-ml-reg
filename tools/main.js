@@ -15,6 +15,8 @@ const GYRO_Z = "Gyro.Z";
 // general
 filename = "";
 file_loaded = false;
+bds_times_max = 0;
+slider_change = 1000;
 
 controls = [
     { name: "Entrance point", style: "solid", color: "#FF0000", hidden: false, opacity: 0.9, position: 0 },
@@ -34,6 +36,9 @@ function handleCSV(df_) {
     df = df_;
 
     bds_times = df["Timestamp"].sub(df["Timestamp"].min()).$data;
+    bds_times_max = df["Timestamp"].max() - df["Timestamp"].min();
+    slider_change = bds_times_max / 10;
+
     bds_press = df.loc({ columns: [PRESS_LEFT, PRESS_CENTER, PRESS_RIGHT] }).mean().$data;
 
     bds_accelX = df[ACCEL_X].$data;
@@ -115,7 +120,33 @@ function loadUI() {
         pos_elem = cListChildren[index].getElementsByClassName("c-pos")[0];
         child.pos_elem = pos_elem;
         pos_elem.oninput = (event) => {
-            child.position = event.target.value;
+            let new_position = event.target.value;
+            if (new_position >= 0 && new_position <= bds_times_max) {
+                child.position = new_position;
+            } else {
+                child.position = new_position < 0 ? 0 : bds_times_max;
+            }
+            pos_elem.value = child.position;
+            drawPlot();
+            // console.log(child.position);
+        };
+
+        // position adjust slider
+        pos_slider_elem = cListChildren[index].getElementsByClassName("c-pos-slider")[0];
+        child.pos_slider_elem = pos_slider_elem;
+        pos_slider_elem.onchange = (event) => {
+            pos_slider_elem.value = 0;
+        };
+        pos_slider_elem.oninput = (event) => {
+            let new_position = Math.trunc(child.position + (event.target.value / 100) * slider_change);
+
+            if (new_position >= 0 && new_position <= bds_times_max) {
+                child.position = new_position;
+            } else {
+                child.position = new_position < 0 ? 0 : bds_times_max;
+            }
+
+            child.pos_elem.value = child.position;
             drawPlot();
             // console.log(child.position);
         };
@@ -128,6 +159,9 @@ function loadUI() {
             child.hide_elem.value = child.hidden;
             child.opacity_elem.value = child.opacity;
             child.pos_elem.value = child.position;
+            child.pos_elem.min = 0;
+            child.pos_elem.max = bds_times_max;
+            child.pos_elem.step = 0.1;
         };
 
         child.update();
@@ -143,15 +177,15 @@ var getPlotLayout = () => ({
         {
             type: "line",
             yref: "paper",
-            x0: line_pos, // * Math.max(...bds_times),
+            x0: controls[0].position, // * Math.max(...bds_times),
             y0: 0,
-            x1: line_pos, // * Math.max(...bds_times),
+            x1: controls[0].position, // * Math.max(...bds_times),
             y1: 1,
-            opacity: controls[0].opacity,
+            opacity: controls[0].hidden ? 0 : controls[0].opacity,
             line: {
                 color: controls[0].color,
                 width: 2.5,
-                dash: controls[0].style
+                dash: controls[0].style,
             },
         },
     ],
