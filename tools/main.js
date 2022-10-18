@@ -141,11 +141,7 @@ function loadUI() {
         // position adjust slider
         pos_slider_elem = cListChildren[index].getElementsByClassName("c-pos-slider")[0];
         child.pos_slider_elem = pos_slider_elem;
-        // pos_slider_elem.onblur = (event) => {
-        //     pos_slider_elem.value = 0;
-        //     stopSliderChange(child);
-        // };
-        pos_slider_elem.onclick = (event) => {
+        pos_slider_elem.onchange = (event) => {
             pos_slider_elem.value = 0;
             stopSliderChange(child);
         };
@@ -190,7 +186,11 @@ function loadUI() {
             }
             drawPlot();
         };
+        child.classList.remove("disabled");
     });
+
+    document.getElementById("jsonImport").classList.remove("disabled");
+    document.getElementById("jsonExport").classList.remove("disabled");
 }
 
 function doSliderChange(obj, sliderValue) {
@@ -198,7 +198,9 @@ function doSliderChange(obj, sliderValue) {
         clearInterval(obj.intervalJob);
     }
     jobfunc = () => {
-        let new_position = Math.round(obj.position + (sliderValue / 100) * sliderBaseChange * plotZoom);
+        dynamic_zoom = plotZoom ** 2;
+        dynamic_zoom = dynamic_zoom < 0.0005 ? 0.0005 : dynamic_zoom;
+        let new_position = Math.round(obj.position + (sliderValue / 100) * sliderBaseChange * dynamic_zoom);
 
         if (new_position >= 0 && new_position <= bds_times_max) {
             obj.position = new_position;
@@ -335,14 +337,13 @@ function exportJSON() {
 
     window.showSaveFilePicker(options).then((handle) => {
         handle.createWritable().then((writtable) => {
-            writtable.write(jsonStr)
-            writtable.close()
+            writtable.write(jsonStr);
+            writtable.close();
         });
     });
 }
 
 function importJSON() {
-    // <input type="file" class="form-control" id="file-selector" accept=".csv" />
     let element = document.createElement("input");
 
     element.setAttribute("type", "file");
@@ -363,7 +364,7 @@ function importJSON() {
                     controls[idx].position = elem.time;
                     controls[idx].update();
                 });
-                drawPlot()
+                drawPlot();
             };
             reader.readAsText(fileList[0]);
         }

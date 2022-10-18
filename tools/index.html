@@ -136,16 +136,16 @@
             <hr />
             <div class="row d-flex justify-content-between">
                 <div class="col-6 d-flex gap-2 justify-content-center" id="c-trance">
-                    <div class="flex-fill btn btn-primary c-press">PRESSURE</div>
-                    <div class="flex-fill btn btn-outline-primary c-accel">ACCELERATION</div>
-                    <div class="flex-fill btn btn-outline-primary c-magnet">MAGNITUDE</div>
-                    <div class="flex-fill btn btn-outline-primary c-gyro">GYRO</div>
+                    <div class="disabled flex-fill btn btn-primary c-press">PRESSURE</div>
+                    <div class="disabled flex-fill btn btn-outline-primary c-accel">ACCELERATION</div>
+                    <div class="disabled flex-fill btn btn-outline-primary c-magnet">MAGNITUDE</div>
+                    <div class="disabled flex-fill btn btn-outline-primary c-gyro">GYRO</div>
                 </div>
                 <div class="col-6 d-flex gap-2 justify-content-center">
                     <div class="flex-fill btn btn-primary disabled">ADD</div>
-                    <div class="flex-fill btn btn-primary">MANUAL UPDATE</div>
-                    <div class="flex-fill btn btn-primary" onclick="importJSON()">IMPORT JSON</div>
-                    <div class="flex-fill btn btn-primary" onclick="exportJSON()">SAVE JSON</div>
+                    <!-- <div class="flex-fill btn btn-primary">MANUAL UPDATE</div> -->
+                    <div class="disabled flex-fill btn btn-primary" id="jsonImport" onclick="importJSON()">IMPORT JSON</div>
+                    <div class="disabled flex-fill btn btn-primary" id="jsonExport" onclick="exportJSON()">SAVE JSON</div>
                 </div>
             </div>
         </div>
