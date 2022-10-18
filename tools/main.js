@@ -307,9 +307,9 @@ function drawPlot() {
                 const x1 = eventdata["xaxis.range[0]"];
                 const x2 = eventdata["xaxis.range[1]"];
                 const xx = x2 - x1;
-                let  plotZoom = isFinite(xx) ? xx / bds_times_max : 1;
+                plotZoom = isFinite(xx) ? xx / bds_times_max : 1;
                 plotZoom = plotZoom <= 0 ? 0.0001 : plotZoom;
-                // console.log(zoom);
+                // console.log(plotZoom);
             });
         });
     }
