@@ -67,14 +67,14 @@ function handleCSV(df_) {
 
 function loadUI() {
     // make em vissible
-    controlsList = document.getElementById("controls-list");
+    const controlsList = document.getElementById("controls-list");
     controlsList.style.display = "";
-    cListChildren = controlsList.children;
+    const cListChildren = controlsList.children;
 
     // attach event handlers to forms
     controls.forEach((child, index) => {
         // name
-        name_elem = cListChildren[index].getElementsByClassName("c-name")[0];
+        const name_elem = cListChildren[index].getElementsByClassName("c-name")[0];
         child.name_elem = name_elem;
         name_elem.oninput = (event) => {
             child.name = event.target.value;
@@ -83,7 +83,7 @@ function loadUI() {
         };
 
         // hide button
-        hide_elem = cListChildren[index].getElementsByClassName("c-hide")[0];
+        const hide_elem = cListChildren[index].getElementsByClassName("c-hide")[0];
         child.hide_elem = hide_elem;
         hide_elem.onclick = (event) => {
             child.hidden = !child.hidden;
@@ -97,7 +97,7 @@ function loadUI() {
         };
 
         // color picker
-        color_elem = cListChildren[index].getElementsByClassName("c-color")[0];
+        const color_elem = cListChildren[index].getElementsByClassName("c-color")[0];
         child.color_elem = color_elem;
         color_elem.oninput = (event) => {
             child.color = event.target.value;
@@ -106,7 +106,7 @@ function loadUI() {
         };
 
         // line style
-        style_elem = cListChildren[index].getElementsByClassName("c-style")[0];
+        const style_elem = cListChildren[index].getElementsByClassName("c-style")[0];
         child.style_elem = style_elem;
         style_elem.oninput = (event) => {
             child.style = event.target.value;
@@ -115,7 +115,7 @@ function loadUI() {
         };
 
         // opacity
-        opacity_elem = cListChildren[index].getElementsByClassName("c-opacity")[0];
+        const opacity_elem = cListChildren[index].getElementsByClassName("c-opacity")[0];
         child.opacity_elem = opacity_elem;
         opacity_elem.oninput = (event) => {
             child.opacity = event.target.value;
@@ -124,7 +124,7 @@ function loadUI() {
         };
 
         // position
-        pos_elem = cListChildren[index].getElementsByClassName("c-pos")[0];
+        const pos_elem = cListChildren[index].getElementsByClassName("c-pos")[0];
         child.pos_elem = pos_elem;
         pos_elem.oninput = (event) => {
             let new_position = event.target.value;
@@ -139,7 +139,7 @@ function loadUI() {
         };
 
         // position adjust slider
-        pos_slider_elem = cListChildren[index].getElementsByClassName("c-pos-slider")[0];
+        const pos_slider_elem = cListChildren[index].getElementsByClassName("c-pos-slider")[0];
         child.pos_slider_elem = pos_slider_elem;
         pos_slider_elem.onchange = (event) => {
             pos_slider_elem.value = 0;
@@ -166,9 +166,9 @@ function loadUI() {
     });
 
     // attach buttons to change trance vissibility
-    btnList = document.getElementById("c-trance");
-    btnListChildren = btnList.children;
-    btnIds = ["press", "accel", "magnet", "gyro"];
+    const btnList = document.getElementById("c-trance");
+    const btnListChildren = btnList.children;
+    const btnIds = ["press", "accel", "magnet", "gyro"];
     Array.from(btnListChildren).forEach((child, index) => {
         child.onclick = () => {
             btnId = btnIds[index];
@@ -198,8 +198,9 @@ function doSliderChange(obj, sliderValue) {
         clearInterval(obj.intervalJob);
     }
     jobfunc = () => {
-        dynamic_zoom = plotZoom ** 2;
+        let dynamic_zoom = plotZoom ** 2;
         dynamic_zoom = dynamic_zoom < 0.0005 ? 0.0005 : dynamic_zoom;
+
         let new_position = Math.round(obj.position + (sliderValue / 100) * sliderBaseChange * dynamic_zoom);
 
         if (new_position >= 0 && new_position <= bds_times_max) {
@@ -302,14 +303,11 @@ function drawPlot() {
     } else {
         Plotly.newPlot("canvas", getPlotData(), getPlotLayout()).then(() => {
             var canvas = document.getElementById("canvas");
-
             canvas.on("plotly_relayout", function (eventdata) {
-                // test = eventdata
-                // console.log(eventdata);
-                let x1 = eventdata["xaxis.range[0]"];
-                let x2 = eventdata["xaxis.range[1]"];
-                let xx = x2 - x1;
-                plotZoom = isFinite(xx) ? xx / bds_times_max : 1;
+                const x1 = eventdata["xaxis.range[0]"];
+                const x2 = eventdata["xaxis.range[1]"];
+                const xx = x2 - x1;
+                let  plotZoom = isFinite(xx) ? xx / bds_times_max : 1;
                 plotZoom = plotZoom <= 0 ? 0.0001 : plotZoom;
                 // console.log(zoom);
             });
