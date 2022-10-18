@@ -13,10 +13,11 @@ const GYRO_Y = "Gyro.Y";
 const GYRO_Z = "Gyro.Z";
 
 // general
-filename = "";
-file_loaded = false;
-bds_times_max = 0;
-slider_change = 1000;
+let filename = "";
+let fileLoaded = false;
+let bds_times_max = 0;
+let sliderBaseChange = 5000;
+let plotZoom = 1;
 
 controls = [
     { name: "Entrance point", style: "solid", color: "#FF0000", hidden: false, opacity: 0.9, position: 0 },
@@ -37,7 +38,6 @@ function handleCSV(df_) {
 
     bds_times = df["Timestamp"].sub(df["Timestamp"].min()).$data;
     bds_times_max = df["Timestamp"].max() - df["Timestamp"].min();
-    slider_change = bds_times_max / 10;
 
     bds_press = df.loc({ columns: [PRESS_LEFT, PRESS_CENTER, PRESS_RIGHT] }).mean().$data;
 
@@ -54,7 +54,7 @@ function handleCSV(df_) {
     bds_gyroZ = df[GYRO_Z].$data;
 
     drawPlot();
-    file_loaded = true;
+    fileLoaded = true;
     loadUI();
 }
 
@@ -136,19 +136,10 @@ function loadUI() {
         child.pos_slider_elem = pos_slider_elem;
         pos_slider_elem.onchange = (event) => {
             pos_slider_elem.value = 0;
+            stopSliderChange(child);
         };
         pos_slider_elem.oninput = (event) => {
-            let new_position = Math.trunc(child.position + (event.target.value / 100) * slider_change);
-
-            if (new_position >= 0 && new_position <= bds_times_max) {
-                child.position = new_position;
-            } else {
-                child.position = new_position < 0 ? 0 : bds_times_max;
-            }
-
-            child.pos_elem.value = child.position;
-            drawPlot();
-            // console.log(child.position);
+            doSliderChange(child, event.target.value);
         };
 
         // backward update
@@ -161,11 +152,38 @@ function loadUI() {
             child.pos_elem.value = child.position;
             child.pos_elem.min = 0;
             child.pos_elem.max = bds_times_max;
-            child.pos_elem.step = 0.1;
+            child.pos_elem.step = 1;
         };
 
         child.update();
     });
+}
+
+function doSliderChange(obj, sliderValue) {
+    if (obj.intervalJob) {
+        clearInterval(obj.intervalJob);
+    }
+    jobfunc = () => {
+        let new_position = Math.round(obj.position + (sliderValue / 100) * sliderBaseChange * plotZoom ** 2);
+
+        if (new_position >= 0 && new_position <= bds_times_max) {
+            obj.position = new_position;
+        } else {
+            obj.position = new_position < 0 ? 0 : bds_times_max;
+        }
+
+        obj.pos_elem.value = obj.position;
+        drawPlot();
+    };
+
+    jobfunc();
+    obj.intervalJob = setInterval(jobfunc, 10);
+}
+
+function stopSliderChange(obj) {
+    if (obj.intervalJob) {
+        clearInterval(obj.intervalJob);
+    }
 }
 
 var getPlotData = () => [{ x: bds_times, y: bds_press, mode: "lines" }];
@@ -192,20 +210,21 @@ var getPlotLayout = () => ({
 });
 
 function drawPlot() {
-    if (file_loaded) {
+    if (fileLoaded) {
         Plotly.react("canvas", getPlotData(), getPlotLayout());
-        // let layout = getPlotLayout()
-
-        // Plotly.react("canvas", getPlotData(), getPlotLayout());
     } else {
         Plotly.newPlot("canvas", getPlotData(), getPlotLayout()).then(() => {
             var canvas = document.getElementById("canvas");
+
             canvas.on("plotly_relayout", function (eventdata) {
-                console.log(eventdata);
-                var xAxis = eventdata.xaxis;
-                var yAxis = eventdata.yaxis;
-                console.log("X-axis range: " + xAxis);
-                console.log("Y-axis range: " + yAxis);
+                // test = eventdata
+                // console.log(eventdata);
+                let x1 = eventdata["xaxis.range[0]"];
+                let x2 = eventdata["xaxis.range[1]"];
+                let xx = x2 - x1;
+                plotZoom = isFinite(xx) ? xx / bds_times_max : 1;
+                plotZoom = plotZoom <= 0 ? 0.0001 : plotZoom;
+                // console.log(zoom);
             });
         });
     }
@@ -216,7 +235,7 @@ line_pos = 0;
 function testLine(value) {
     // line_pos = value / 1000;
     line_pos = value;
-    if (file_loaded) {
+    if (fileLoaded) {
         drawPlot();
     }
     // console.log(line_pos);
