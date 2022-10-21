@@ -30,6 +30,8 @@ controls = [
     { name: "Entrance point", style: "solid", color: "#FF0000", hidden: false, opacity: 0.9, position: 0 },
     { name: "Nadir pressure", style: "solid", color: "#00FF00", hidden: false, opacity: 0.9, position: 0 },
     { name: "Tailwater", style: "solid", color: "#0000FF", hidden: false, opacity: 0.9, position: 0 },
+    { name: "???", style: "solid", color: "#0000FF", hidden: false, opacity: 0.9, position: 0 },
+    { name: "???", style: "solid", color: "#0000FF", hidden: false, opacity: 0.9, position: 0 },
 ];
 
 // data loading

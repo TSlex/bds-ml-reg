@@ -132,13 +132,81 @@
                         </div>
                     </div>
                 </div>
+                <div class="row list-group-item p-4">
+                    <div class="col">
+                        <div class="row d-flex justify-content-end">
+                            <div class="col"><input type="text" class="form-control c-name" value="Nadir pressure" /></div>
+                            <div class="col-3"><input type="range" class="form-range c-pos-slider" min="-100" max="100" step="0.1" value="0" /></div>
+                            <div class="col-2"><input type="number" min="0" step="1" class="form-control c-pos" value="50" /></div>
+                            <div class="col-1"><div class="btn btn-secondary c-hide">HIDE</div></div>
+                        </div>
+                        <div class="row d-flex justify-content-end mt-2">
+                            <div class="col-2">
+                                <div class="d-flex align-items-center">
+                                    <span class="form-label m-2">Style:</span>
+                                    <select class="form-select c-style">
+                                        <option value="solid">line</option>
+                                        <option value="dash">dashed</option>
+                                        <option value="dashdot">dashdot</option>
+                                        <option value="dot">dotted</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-3 d-flex align-items-center">
+                                <span class="form-label m-2">Opacity:</span>
+                                <input type="range" class="form-range c-opacity" min="0" max="1" step="0.05" value="0.8" />
+                            </div>
+                            <div class="col-2">
+                                <div class="d-flex align-items-center">
+                                    <span class="form-label m-2">Color:</span>
+                                    <input type="color" class="form-control form-control-color c-color" value="#FF0000" title="Choose your color" />
+                                </div>
+                            </div>
+                            <div class="col-1"><div class="btn btn-danger disabled">REMOVE</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row list-group-item p-4">
+                    <div class="col">
+                        <div class="row d-flex justify-content-end">
+                            <div class="col"><input type="text" class="form-control c-name" value="Nadir pressure" /></div>
+                            <div class="col-3"><input type="range" class="form-range c-pos-slider" min="-100" max="100" step="0.1" value="0" /></div>
+                            <div class="col-2"><input type="number" min="0" step="1" class="form-control c-pos" value="50" /></div>
+                            <div class="col-1"><div class="btn btn-secondary c-hide">HIDE</div></div>
+                        </div>
+                        <div class="row d-flex justify-content-end mt-2">
+                            <div class="col-2">
+                                <div class="d-flex align-items-center">
+                                    <span class="form-label m-2">Style:</span>
+                                    <select class="form-select c-style">
+                                        <option value="solid">line</option>
+                                        <option value="dash">dashed</option>
+                                        <option value="dashdot">dashdot</option>
+                                        <option value="dot">dotted</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-3 d-flex align-items-center">
+                                <span class="form-label m-2">Opacity:</span>
+                                <input type="range" class="form-range c-opacity" min="0" max="1" step="0.05" value="0.8" />
+                            </div>
+                            <div class="col-2">
+                                <div class="d-flex align-items-center">
+                                    <span class="form-label m-2">Color:</span>
+                                    <input type="color" class="form-control form-control-color c-color" value="#FF0000" title="Choose your color" />
+                                </div>
+                            </div>
+                            <div class="col-1"><div class="btn btn-danger disabled">REMOVE</div></div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <hr />
             <div class="row d-flex justify-content-between">
                 <div class="col-6 d-flex gap-2 justify-content-center" id="c-trance">
                     <div class="disabled flex-fill btn btn-primary c-press">PRESSURE</div>
                     <div class="disabled flex-fill btn btn-outline-primary c-accel">ACCELERATION</div>
-                    <div class="disabled flex-fill btn btn-outline-primary c-magnet">MAGNITUDE</div>
+                    <div class="disabled flex-fill btn btn-outline-primary c-magnet">MAGNETOMETER</div>
                     <div class="disabled flex-fill btn btn-outline-primary c-gyro">GYRO</div>
                 </div>
                 <div class="col-6 d-flex gap-2 justify-content-center">
